@@ -45,7 +45,7 @@ public class FLImageScrollView: UIView{
     
     // Public values
     
-    private(set) var hasCaption = false
+    public private(set) var hasCaption = false
     
     public var indicatorControlTopPadding: CGFloat = 5
     public var captionLabelHeight: CGFloat = 0
@@ -178,7 +178,7 @@ public class FLImageScrollView: UIView{
         pageControl.currentPageIndicatorTintColor = pageControlcurrentPageIndicatorTintColor
     }
     
-    private func updateControlHeight(){
+    public func updateControlHeight(){
         
         indicatorAreaHeight = 0
         captionLabelHeight = 0
@@ -377,7 +377,7 @@ public class FLImageScrollView: UIView{
         numberLabel.text = "\(pageControl.currentPage + 1) / \(imageList.count)"
     }
     
-    private func setLongPressGesture(target: AnyObject?, action: Selector){
+    public func setLongPressGesture(target: AnyObject?, action: Selector){
         
         for imageView in self.displayingImageViewList{
             
