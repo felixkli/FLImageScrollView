@@ -1,5 +1,6 @@
 import Foundation
 import SDWebImage
+import UIKit
 
 class ScrollView: UIScrollView{
     
