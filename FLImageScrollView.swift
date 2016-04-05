@@ -359,7 +359,6 @@ class FLImageScrollView: UIView{
             
             scrollView.setContentOffset(CGPoint(x: CGFloat(pageControl.currentPage - 1) * scrollView.bounds.width, y: 0), animated: true)
             loadVisibleImages()
-            print("scroll left")
         }
     }
     
@@ -369,7 +368,6 @@ class FLImageScrollView: UIView{
             
             scrollView.setContentOffset(CGPoint(x: CGFloat(pageControl.currentPage + 1) * scrollView.bounds.width, y: 0), animated: true)
             loadVisibleImages()
-            print("scroll right")
         }
     }
     
@@ -391,7 +389,6 @@ class FLImageScrollView: UIView{
     func loadVisibleImages(){
         
         if loadVisibleOnly{
-            print("loadVisibleImages()")
             
             for (imageIndex, imageView) in self.displayingImageViewList.enumerate(){
                 
@@ -432,7 +429,7 @@ class FLImageScrollView: UIView{
 
 //MARK: - UIScrollViewDelegate
 
-extension ImageScrollView: UIScrollViewDelegate{
+extension FLImageScrollView: UIScrollViewDelegate{
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         
