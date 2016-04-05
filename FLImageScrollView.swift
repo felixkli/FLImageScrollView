@@ -54,59 +54,57 @@ public class FLImageScrollView: UIView{
     
     public var enableEncodeURL = false
     
-    var leftArrowImage: UIImage?{
+    public var leftArrowImage: UIImage?{
         didSet{
             leftArrow.setImage(leftArrowImage, forState: UIControlState.Normal)
         }
     }
     
-    var rightArrowImage: UIImage?{
+    public var rightArrowImage: UIImage?{
         didSet{
             rightArrow.setImage(rightArrowImage, forState: UIControlState.Normal)
         }
     }
     
     // Better for large number of galleries or large photos
-    var loadVisibleOnly = false
+    public var loadVisibleOnly = false
     
-    var currentPage: Int{
-        get{
-            return pageControl.currentPage
-        }
+    public var currentPage: Int{
+        return pageControl.currentPage
     }
     
-    var imageList: [String] = []{
+    public var imageList: [String] = []{
         didSet{
             updateScrollViewContent()
         }
     }
     
-    var captionList: [String] = []{
+    public var captionList: [String] = []{
         didSet{
             updateControlHeight()
         }
     }
     
-    var indicatorStyle: ImageScrollIndicatorStyle = .pageControlBelow{
+    public var indicatorStyle: ImageScrollIndicatorStyle = .pageControlBelow{
         didSet{
             updateControlHeight()
         }
     }
     
-    var imageContentMode: UIViewContentMode = UIViewContentMode.ScaleAspectFit{
+    public var imageContentMode: UIViewContentMode = UIViewContentMode.ScaleAspectFit{
         didSet{
             updateScrollViewContent()
         }
     }
     
-    var pageControlpageIndicatorTintColor = UIColor(white: 0.9, alpha: 0.8){
+    public var pageControlpageIndicatorTintColor = UIColor(white: 0.9, alpha: 0.8){
         didSet{
             
             updatePageControl()
         }
     }
     
-    var pageControlcurrentPageIndicatorTintColor = UIColor(white: 0.2, alpha: 0.8){
+    public var pageControlcurrentPageIndicatorTintColor = UIColor(white: 0.2, alpha: 0.8){
         didSet{
             
             updatePageControl()
