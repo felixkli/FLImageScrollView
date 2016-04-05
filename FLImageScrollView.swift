@@ -120,7 +120,7 @@ public class FLImageScrollView: UIView{
         defaultConfiguration()
     }
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         
         defaultConfiguration()
@@ -236,7 +236,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    override private func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         
         updateControlHeight()
@@ -430,7 +430,7 @@ public class FLImageScrollView: UIView{
 
 //MARK: - UIScrollViewDelegate
 
-public extension FLImageScrollView: UIScrollViewDelegate{
+extension FLImageScrollView: UIScrollViewDelegate{
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         
