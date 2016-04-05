@@ -2,7 +2,7 @@ import Foundation
 import SDWebImage
 import UIKit
 
-class ScrollView: UIScrollView{
+public class ScrollView: UIScrollView{
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.superview?.touchesBegan(touches, withEvent: event)
@@ -21,11 +21,11 @@ class ScrollView: UIScrollView{
     }
 }
 
-enum ImageScrollIndicatorStyle{
+public enum ImageScrollIndicatorStyle{
     case pageControlBelow, pageControlOverContext, arrowControlBelow
 }
 
-class FLImageScrollView: UIView{
+public class FLImageScrollView: UIView{
     
     private let scrollView = ScrollView()
     private let pageControl = UIPageControl()
@@ -48,12 +48,12 @@ class FLImageScrollView: UIView{
     
     private(set) var hasCaption = false
 
-    var indicatorControlTopPadding: CGFloat = 5
-    var captionLabelHeight: CGFloat = 0
-    var indicatorAreaHeight: CGFloat = 0
-    var pageControlOffsetFromBottom: CGFloat = 30
+    public var indicatorControlTopPadding: CGFloat = 5
+    public var captionLabelHeight: CGFloat = 0
+    public var indicatorAreaHeight: CGFloat = 0
+    public var pageControlOffsetFromBottom: CGFloat = 30
     
-    var enableEncodeURL = false
+    public var enableEncodeURL = false
     
     var leftArrowImage: UIImage?{
         didSet{
@@ -115,24 +115,24 @@ class FLImageScrollView: UIView{
     }
     
     
-    init(){
+    public init(){
         super.init(frame:CGRectZero)
         defaultConfiguration()
     }
     
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         
         defaultConfiguration()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         defaultConfiguration()
     }
     
-    func defaultConfiguration(){
+    private func defaultConfiguration(){
         
         //                backgroundColor = UIColor.purpleColor()
         //                leftArrow.backgroundColor = UIColor.greenColor()
@@ -170,7 +170,7 @@ class FLImageScrollView: UIView{
         updateScrollViewContent()
     }
     
-    func updatePageControl(){
+    private func updatePageControl(){
         
         pageControl.hidesForSinglePage = true
         pageControl.userInteractionEnabled = false
@@ -178,7 +178,7 @@ class FLImageScrollView: UIView{
         pageControl.currentPageIndicatorTintColor = pageControlcurrentPageIndicatorTintColor
     }
     
-    func updateControlHeight(){
+    private func updateControlHeight(){
         
         indicatorAreaHeight = 0
         captionLabelHeight = 0
@@ -236,7 +236,7 @@ class FLImageScrollView: UIView{
         }
     }
     
-    override func layoutSubviews() {
+    override private func layoutSubviews() {
         super.layoutSubviews()
         
         updateControlHeight()
@@ -288,7 +288,7 @@ class FLImageScrollView: UIView{
         scrollView.scrollRectToVisible(CGRectMake(CGFloat(pageControl.currentPage) * scrollView.bounds.width, 0,  scrollView.bounds.width, 1), animated: false)
     }
     
-    func updateScrollViewContent(){
+    private func updateScrollViewContent(){
         
         pageControl.numberOfPages = imageList.count
         
@@ -354,7 +354,7 @@ class FLImageScrollView: UIView{
         layoutIfNeeded()
     }
     
-    func leftArrowTapped(sender: AnyObject){
+    private func leftArrowTapped(sender: AnyObject){
         
         if pageControl.currentPage > 0{
             
@@ -363,7 +363,7 @@ class FLImageScrollView: UIView{
         }
     }
     
-    func rightArrowTapped(sender: AnyObject){
+    private func rightArrowTapped(sender: AnyObject){
         
         if pageControl.currentPage + 1 < pageControl.numberOfPages{
             
@@ -372,12 +372,12 @@ class FLImageScrollView: UIView{
         }
     }
     
-    func updateNumberLabel(){
+    private func updateNumberLabel(){
         
         numberLabel.text = "\(pageControl.currentPage + 1) / \(imageList.count)"
     }
     
-    func setLongPressGesture(target: AnyObject?, action: Selector){
+    private func setLongPressGesture(target: AnyObject?, action: Selector){
         
         for imageView in self.displayingImageViewList{
             
@@ -430,7 +430,7 @@ class FLImageScrollView: UIView{
 
 //MARK: - UIScrollViewDelegate
 
-extension FLImageScrollView: UIScrollViewDelegate{
+public extension FLImageScrollView: UIScrollViewDelegate{
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         
