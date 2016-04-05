@@ -115,7 +115,7 @@ public class FLImageScrollView: UIView{
     }
     
     
-    public init(){
+    init(){
         super.init(frame:CGRectZero)
         defaultConfiguration()
     }
@@ -126,7 +126,7 @@ public class FLImageScrollView: UIView{
         defaultConfiguration()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         defaultConfiguration()
@@ -387,7 +387,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    func loadVisibleImages(){
+    private func loadVisibleImages(){
         
         if loadVisibleOnly{
             
@@ -406,12 +406,12 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    func shouldLoadCurrentIndex(index: Int) -> Bool{
+    private func shouldLoadCurrentIndex(index: Int) -> Bool{
         
         return index == pageControl.currentPage || index == pageControl.currentPage + 1 || index == pageControl.currentPage - 1
     }
     
-    func loadImageForIndex(index: Int){
+    private func loadImageForIndex(index: Int){
         
         var imageString = imageList[index]
         
@@ -432,7 +432,7 @@ public class FLImageScrollView: UIView{
 
 extension FLImageScrollView: UIScrollViewDelegate{
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    public func scrollViewDidScroll(scrollView: UIScrollView) {
         
         let width = scrollView.frame.size.width;
         let wholePage = Int((scrollView.contentOffset.x + (0.5 * width)) / width);
