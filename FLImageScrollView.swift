@@ -2,7 +2,7 @@ import Foundation
 import SDWebImage
 import UIKit
 
-public class ScrollView: UIScrollView{
+class ScrollView: UIScrollView{
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.superview?.touchesBegan(touches, withEvent: event)
