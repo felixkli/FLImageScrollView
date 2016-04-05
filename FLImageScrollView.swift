@@ -24,7 +24,7 @@ enum ImageScrollIndicatorStyle{
     case pageControlBelow, pageControlOverContext, arrowControlBelow
 }
 
-class ImageScrollView: UIView{
+class FLImageScrollView: UIView{
     
     private let scrollView = ScrollView()
     private let pageControl = UIPageControl()
