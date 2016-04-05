@@ -1,6 +1,5 @@
 import Foundation
 import SDWebImage
-import UIKit
 
 class ScrollView: UIScrollView{
     
@@ -47,7 +46,7 @@ public class FLImageScrollView: UIView{
     // Public values
     
     private(set) var hasCaption = false
-
+    
     public var indicatorControlTopPadding: CGFloat = 5
     public var captionLabelHeight: CGFloat = 0
     public var indicatorAreaHeight: CGFloat = 0
@@ -126,7 +125,7 @@ public class FLImageScrollView: UIView{
         defaultConfiguration()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         defaultConfiguration()
@@ -148,12 +147,15 @@ public class FLImageScrollView: UIView{
         
         updatePageControl()
         
+        let leftArrowSelector = #selector(FLImageScrollView.leftArrowTapped(_:))
+        let rightArrowSelector = #selector(FLImageScrollView.rightArrowTapped(_:))
+        
         leftArrow.setImage(UIImage(named: "gallery_arrow_left"), forState: UIControlState.Normal)
-        leftArrow.addTarget(self, action: #selector(leftArrowTapped(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+        leftArrow.addTarget(self, action: leftArrowSelector, forControlEvents: UIControlEvents.TouchUpInside)
         leftArrow.contentMode = UIViewContentMode.ScaleAspectFit
         
         rightArrow.setImage(UIImage(named: "gallery_arrow_right"), forState: UIControlState.Normal)
-        rightArrow.addTarget(self, action: #selector(rightArrowTapped(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+        rightArrow.addTarget(self, action: rightArrowSelector, forControlEvents: UIControlEvents.TouchUpInside)
         rightArrow.contentMode = UIViewContentMode.ScaleAspectFit
         
         numberLabel.textAlignment = NSTextAlignment.Center
@@ -236,7 +238,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         
         updateControlHeight()
@@ -354,7 +356,7 @@ public class FLImageScrollView: UIView{
         layoutIfNeeded()
     }
     
-    private func leftArrowTapped(sender: AnyObject){
+    func leftArrowTapped(sender: AnyObject){
         
         if pageControl.currentPage > 0{
             
@@ -363,7 +365,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    private func rightArrowTapped(sender: AnyObject){
+    func rightArrowTapped(sender: AnyObject){
         
         if pageControl.currentPage + 1 < pageControl.numberOfPages{
             
