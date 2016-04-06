@@ -1,5 +1,10 @@
-###### Add string name for hardware.
-###### Add cocoapods support.
+###### FLImageScrollView
+
+Basic image scrollView 
+
+### Cocoapod
+
+    pod 'FLImageScrollView'
 
 --- 
 li.felix162@gmail.com
