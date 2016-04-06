@@ -1,4 +1,4 @@
-###### FLImageScrollView
+### FLImageScrollView
 
 Basic image scrollView 
 
