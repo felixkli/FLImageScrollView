@@ -8,14 +8,14 @@
 
 Pod::Spec.new do |s|
 s.name             = "FLImageScrollView"
-s.version          = "0.2.2"
+s.version          = "0.2.3"
 s.summary          = "ScrollView containing list of images."
 s.homepage         = "https://github.com/felixkli/FLImageScrollView"
 s.license          = 'MIT'
 s.author           = { "Felix Li" => "li.felix162@gmail.com" }
-s.source           = { :git => "https://github.com/felixkli/FLImageScrollView.git", :tag => '0.2.2' }
+s.source           = { :git => "https://github.com/felixkli/FLImageScrollView.git", :tag => s.version.to_s }
 s.source_files = 'FLImageScrollView.swift'
-s.dependency 'SDWebImage', '3.7.5'
+s.dependency 'SDWebImage'
 s.platform     = :ios, "8.0"
 s.ios.deployment_target = "8.0"
 
