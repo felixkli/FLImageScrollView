@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "FLImageScrollView"
-s.version          = "0.3.0"
+s.version          = "0.3.1"
 s.summary          = "ScrollView containing list of images."
 s.homepage         = "https://github.com/felixkli/FLImageScrollView"
 s.license          = 'MIT'
