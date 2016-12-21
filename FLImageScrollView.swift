@@ -1,33 +1,16 @@
 import Foundation
 import SDWebImage
 
-class ScrollView: UIScrollView{
-    
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.superview?.touchesBegan(touches, withEvent: event)
-    }
-    
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.superview?.touchesMoved(touches, withEvent: event)
-    }
-    
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        self.superview?.touchesCancelled(touches, withEvent: event)
-    }
-    
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.superview?.touchesEnded(touches, withEvent: event)
-    }
-}
-
 public enum ImageScrollIndicatorStyle{
     case pageControlBelow, pageControlOverContext, arrowControlBelow
 }
 
 public class FLImageScrollView: UIView{
     
-    private let scrollView = ScrollView()
-    private let pageControl = UIPageControl()
+    fileprivate let pageControl = UIPageControl()
+    fileprivate var displayingImageViewList: [UIImageView] = []
+    
+    private let scrollView = UIScrollView()
     private let arrowControlView = UIView()
     private let leftArrow = UIButton()
     private let rightArrow = UIButton()
@@ -37,7 +20,6 @@ public class FLImageScrollView: UIView{
     private let arrowControlHeight: CGFloat = 30
     private let arrowControlViewWidth: CGFloat = 140
     
-    private var displayingImageViewList: [UIImageView] = []
     private var displayingCaptionLabelList: [UILabel] = []
     private var minImageRatio: CGFloat = 2
     
@@ -56,13 +38,13 @@ public class FLImageScrollView: UIView{
     
     public var leftArrowImage: UIImage?{
         didSet{
-            leftArrow.setImage(leftArrowImage, forState: UIControlState.Normal)
+            leftArrow.setImage(leftArrowImage, for: UIControlState.normal)
         }
     }
     
     public var rightArrowImage: UIImage?{
         didSet{
-            rightArrow.setImage(rightArrowImage, forState: UIControlState.Normal)
+            rightArrow.setImage(rightArrowImage, for: .normal)
         }
     }
     
@@ -91,7 +73,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    public var imageContentMode: UIViewContentMode = UIViewContentMode.ScaleAspectFit{
+    public var imageContentMode: UIViewContentMode = .scaleAspectFit{
         didSet{
             updateScrollViewContent()
         }
@@ -113,7 +95,7 @@ public class FLImageScrollView: UIView{
     
     
     init(){
-        super.init(frame:CGRectZero)
+        super.init(frame:CGRect.zero)
         defaultConfiguration()
     }
     
@@ -138,26 +120,26 @@ public class FLImageScrollView: UIView{
         //                pageControl.backgroundColor = UIColor.yellowColor()
         
         
-        scrollView.backgroundColor = UIColor.clearColor()
-        scrollView.pagingEnabled = true
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.delegate = self
         
         updatePageControl()
         
-        let leftArrowSelector = #selector(FLImageScrollView.leftArrowTapped(_:))
-        let rightArrowSelector = #selector(FLImageScrollView.rightArrowTapped(_:))
+        let leftArrowSelector = #selector(FLImageScrollView.leftArrowTapped(sender:))
+        let rightArrowSelector = #selector(FLImageScrollView.rightArrowTapped(sender:))
         
-        leftArrow.setImage(UIImage(named: "gallery_arrow_left"), forState: UIControlState.Normal)
-        leftArrow.addTarget(self, action: leftArrowSelector, forControlEvents: UIControlEvents.TouchUpInside)
-        leftArrow.contentMode = UIViewContentMode.ScaleAspectFit
+        leftArrow.setImage(UIImage(named: "gallery_arrow_left"), for: .normal)
+        leftArrow.addTarget(self, action: leftArrowSelector, for: .touchUpInside)
+        leftArrow.contentMode = .scaleAspectFit
         
-        rightArrow.setImage(UIImage(named: "gallery_arrow_right"), forState: UIControlState.Normal)
-        rightArrow.addTarget(self, action: rightArrowSelector, forControlEvents: UIControlEvents.TouchUpInside)
-        rightArrow.contentMode = UIViewContentMode.ScaleAspectFit
+        rightArrow.setImage(UIImage(named: "gallery_arrow_right"), for: .normal)
+        rightArrow.addTarget(self, action: rightArrowSelector, for: .touchUpInside)
+        rightArrow.contentMode = .scaleAspectFit
         
-        numberLabel.textAlignment = NSTextAlignment.Center
-        numberLabel.font = UIFont.systemFontOfSize(14)
+        numberLabel.textAlignment = .center
+        numberLabel.font = UIFont.systemFont(ofSize: 14)
         
         addSubview(scrollView)
         addSubview(pageControl)
@@ -173,7 +155,7 @@ public class FLImageScrollView: UIView{
     private func updatePageControl(){
         
         pageControl.hidesForSinglePage = true
-        pageControl.userInteractionEnabled = false
+        pageControl.isUserInteractionEnabled = false
         pageControl.pageIndicatorTintColor = pageControlpageIndicatorTintColor
         pageControl.currentPageIndicatorTintColor = pageControlcurrentPageIndicatorTintColor
     }
@@ -189,8 +171,8 @@ public class FLImageScrollView: UIView{
         
         if indicatorStyle == .pageControlBelow{
             
-            pageControl.hidden = false
-            arrowControlView.hidden = true
+            pageControl.isHidden = false
+            arrowControlView.isHidden = true
             
             if imageList.count > 1{
                 indicatorAreaHeight += indicatorControlTopPadding + pageControlHeight
@@ -199,13 +181,13 @@ public class FLImageScrollView: UIView{
             
         }else if indicatorStyle == .pageControlOverContext{
             
-            arrowControlView.hidden = true
-            pageControl.hidden = false
+            arrowControlView.isHidden = true
+            pageControl.isHidden = false
             
         }else{
             
-            pageControl.hidden = true
-            arrowControlView.hidden = false
+            pageControl.isHidden = true
+            arrowControlView.isHidden = false
             
             if imageList.count > 1{
                 indicatorAreaHeight += indicatorControlTopPadding + arrowControlHeight
@@ -214,11 +196,11 @@ public class FLImageScrollView: UIView{
         
         if imageList.count <= 1{
             
-            pageControl.hidden = true
-            arrowControlView.hidden = true
+            pageControl.isHidden = true
+            arrowControlView.isHidden = true
         }
         
-        for (index, _) in self.imageList.enumerate(){
+        for (index, _) in self.imageList.enumerated(){
             
             if self.captionList.count > index{
                 
@@ -226,9 +208,9 @@ public class FLImageScrollView: UIView{
                 
                 if caption.characters.count > 0{
                     
-                    let constraintRect = CGSize(width: bounds.width - 20, height: CGFloat.max)
+                    let constraintRect = CGSize(width: bounds.width - 20, height: CGFloat.greatestFiniteMagnitude)
                     
-                    let boundingBox = caption.boundingRectWithSize(constraintRect, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(14)], context: nil)
+                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14)], context: nil)
                     
                     captionLabelHeight = max(boundingBox.height, captionLabelHeight - self.captionLabelTopPadding) + self.captionLabelTopPadding
                 }
@@ -243,49 +225,49 @@ public class FLImageScrollView: UIView{
         
         if indicatorStyle == .pageControlBelow{
             
-            scrollView.contentSize = CGSizeMake(CGFloat(imageList.count) * bounds.width, bounds.height - indicatorAreaHeight)
-            scrollView.frame = CGRectMake(0, 0, bounds.width, bounds.height - indicatorAreaHeight)
+            scrollView.contentSize = CGSize(width: CGFloat(imageList.count) * bounds.width, height: bounds.height - indicatorAreaHeight)
+            scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height - indicatorAreaHeight)
             
             pageControl.center = scrollView.center
-            pageControl.frame = CGRectMake(pageControl.frame.origin.x, bounds.height - pageControlHeight, pageControl.bounds.width, pageControlHeight)
+            pageControl.frame = CGRect(x: pageControl.frame.origin.x, y: bounds.height - pageControlHeight, width: pageControl.bounds.width, height: pageControlHeight)
             
         }else if indicatorStyle == .pageControlOverContext{
             
-            scrollView.contentSize = CGSizeMake(CGFloat(imageList.count) * bounds.width, bounds.height)
-            scrollView.frame = CGRectMake(0, 0, bounds.width, bounds.height)
+            scrollView.contentSize = CGSize(width: CGFloat(imageList.count) * bounds.width, height: bounds.height)
+            scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
             
             pageControl.center = scrollView.center
-            pageControl.frame = CGRectMake(pageControl.frame.origin.x, scrollView.bounds.height - captionLabelHeight - pageControlOffsetFromBottom, pageControl.bounds.width, pageControlHeight)
+            pageControl.frame = CGRect(x:pageControl.frame.origin.x, y: scrollView.bounds.height - captionLabelHeight - pageControlOffsetFromBottom, width: pageControl.bounds.width, height: pageControlHeight)
         }else if indicatorStyle == .arrowControlBelow{
             
-            scrollView.contentSize = CGSizeMake(CGFloat(imageList.count) * bounds.width, bounds.height - indicatorAreaHeight)
-            scrollView.frame = CGRectMake(0, 0, bounds.width, bounds.height - indicatorAreaHeight)
+            scrollView.contentSize = CGSize(width: CGFloat(imageList.count) * bounds.width, height: bounds.height - indicatorAreaHeight)
+            scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height - indicatorAreaHeight)
             
             arrowControlView.center = scrollView.center
-            arrowControlView.frame = CGRectMake(arrowControlView.frame.origin.x, bounds.height - arrowControlHeight, arrowControlViewWidth, arrowControlHeight)
+            arrowControlView.frame = CGRect(x: arrowControlView.frame.origin.x, y: bounds.height - arrowControlHeight, width: arrowControlViewWidth, height: arrowControlHeight)
             
-            leftArrow.frame = CGRectMake(0, 0, arrowControlHeight, arrowControlHeight)
-            rightArrow.frame = CGRectMake(arrowControlView.frame.width - arrowControlHeight, 0, arrowControlHeight, arrowControlHeight)
-            numberLabel.frame = CGRectMake(arrowControlHeight, 0, arrowControlView.frame.width - arrowControlHeight * 2, arrowControlHeight)
+            leftArrow.frame = CGRect(x: 0, y: 0, width: arrowControlHeight, height: arrowControlHeight)
+            rightArrow.frame = CGRect(x: arrowControlView.frame.width - arrowControlHeight, y: 0, width: arrowControlHeight, height: arrowControlHeight)
+            numberLabel.frame = CGRect(x: arrowControlHeight, y: 0, width: arrowControlView.frame.width - arrowControlHeight * 2, height: arrowControlHeight)
         }
         
         
-        for (index, imageView) in displayingImageViewList.enumerate(){
+        for (index, imageView) in displayingImageViewList.enumerated(){
             
             let indexFloat = CGFloat(index)
             
-            imageView.frame = CGRectMake(indexFloat * self.scrollView.bounds.width, 0, self.scrollView.bounds.width, self.scrollView.bounds.height - captionLabelHeight)
+            imageView.frame = CGRect(x: indexFloat * self.scrollView.bounds.width, y: 0, width: self.scrollView.bounds.width, height: self.scrollView.bounds.height - captionLabelHeight)
             
             if hasCaption{
                 
                 let captionLabel = displayingCaptionLabelList[index]
-                captionLabel.frame = CGRectMake(indexFloat * self.scrollView.bounds.width + 10, imageView.bounds.height + self.captionLabelTopPadding, self.scrollView.bounds.width - 20, captionLabelHeight - self.captionLabelTopPadding)
+                captionLabel.frame = CGRect(x: indexFloat * self.scrollView.bounds.width + 10, y: imageView.bounds.height + self.captionLabelTopPadding, width: self.scrollView.bounds.width - 20, height: captionLabelHeight - self.captionLabelTopPadding)
                 
                 captionLabel.sizeToFit()
             }
         }
         
-        scrollView.scrollRectToVisible(CGRectMake(CGFloat(pageControl.currentPage) * scrollView.bounds.width, 0,  scrollView.bounds.width, 1), animated: false)
+        scrollView.scrollRectToVisible(CGRect(x: CGFloat(pageControl.currentPage) * scrollView.bounds.width, y: 0, width: scrollView.bounds.width, height: 1), animated: false)
     }
     
     private func updateScrollViewContent(){
@@ -303,8 +285,8 @@ public class FLImageScrollView: UIView{
             if hasCaption{
                 let captionLabel = UILabel()
                 
-                captionLabel.textColor = UIColor.grayColor()
-                captionLabel.font = UIFont.systemFontOfSize(14)
+                captionLabel.textColor = UIColor.gray
+                captionLabel.font = UIFont.systemFont(ofSize: 14)
                 captionLabel.numberOfLines = 0
                 
                 scrollView.addSubview(captionLabel)
@@ -330,13 +312,13 @@ public class FLImageScrollView: UIView{
             
         }else{
             
-            for (index, _) in imageList.enumerate(){
+            for (index, _) in imageList.enumerated(){
                 
-                loadImageForIndex(index)
+                loadImageForIndex(index: index)
             }
         }
         
-        for (index, caption) in captionList.enumerate(){
+        for (index, caption) in captionList.enumerated(){
             
             if hasCaption && displayingCaptionLabelList.count > index && captionList.count > index{
                 
@@ -347,7 +329,7 @@ public class FLImageScrollView: UIView{
         
         if displayingImageViewList.count > 0{
             let imageView = displayingImageViewList[currentPage]
-            scrollView.bringSubviewToFront(imageView)
+            scrollView.bringSubview(toFront: imageView)
         }
         
         setNeedsLayout()
@@ -372,7 +354,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    private func updateNumberLabel(){
+    fileprivate func updateNumberLabel(){
         
         numberLabel.text = "\(pageControl.currentPage + 1) / \(imageList.count)"
     }
@@ -382,21 +364,21 @@ public class FLImageScrollView: UIView{
         for imageView in self.displayingImageViewList{
             
             let gesture = UILongPressGestureRecognizer(target: target, action: action)
-            imageView.userInteractionEnabled = true
+            imageView.isUserInteractionEnabled = true
             imageView.addGestureRecognizer(gesture)
         }
     }
     
-    private func loadVisibleImages(){
+    fileprivate func loadVisibleImages(){
         
         if loadVisibleOnly{
             
-            for (imageIndex, imageView) in self.displayingImageViewList.enumerate(){
+            for (imageIndex, imageView) in self.displayingImageViewList.enumerated(){
                 
-                if self.shouldLoadCurrentIndex(imageIndex){
+                if self.shouldLoadCurrentIndex(index: imageIndex){
                     
                     if displayingImageViewList[imageIndex].image == nil{
-                        loadImageForIndex(imageIndex)
+                        loadImageForIndex(index: imageIndex)
                     }
                 }else{
                     
@@ -415,7 +397,7 @@ public class FLImageScrollView: UIView{
         
         var imageString = imageList[index]
         
-        if let encodedString = imageString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) where enableEncodeURL{
+        if let encodedString = imageString.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed), enableEncodeURL{
             
             imageString = encodedString
         }
@@ -423,7 +405,9 @@ public class FLImageScrollView: UIView{
         if let url = NSURL(string: imageString){
             
             let imageView = displayingImageViewList[index]
-            imageView.sd_setImageWithURL(url, placeholderImage: UIImage(named: "broken_image"), completed: nil)
+            
+            // TODO: FIX SDWEBIMAGE
+            //            imageView.sd_setImage(with: url, placeholderImage:  UIImage(named: "broken_image"), completed: nil)
         }
     }
 }
@@ -446,7 +430,7 @@ extension FLImageScrollView: UIScrollViewDelegate{
             
             let imageView = displayingImageViewList[pageControl.currentPage]
             
-            scrollView.bringSubviewToFront(imageView)
+            scrollView.bringSubview(toFront: imageView)
         }
     }
 }
