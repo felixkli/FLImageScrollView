@@ -402,12 +402,11 @@ public class FLImageScrollView: UIView{
             imageString = encodedString
         }
         
-        if let url = NSURL(string: imageString){
+        if let url = URL(string: imageString){
             
             let imageView = displayingImageViewList[index]
             
-            // TODO: FIX SDWEBIMAGE
-            //            imageView.sd_setImage(with: url, placeholderImage:  UIImage(named: "broken_image"), completed: nil)
+            imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "broken_image"), options: [], progress: nil, completed: nil)
         }
     }
 }
@@ -416,7 +415,7 @@ public class FLImageScrollView: UIView{
 
 extension FLImageScrollView: UIScrollViewDelegate{
     
-    public func scrollViewDidScroll(scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let width = scrollView.frame.size.width;
         let wholePage = Int((scrollView.contentOffset.x + (0.5 * width)) / width);
