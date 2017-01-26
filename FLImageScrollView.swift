@@ -93,7 +93,6 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    
     init(){
         super.init(frame:CGRect.zero)
         defaultConfiguration()
@@ -367,6 +366,16 @@ public class FLImageScrollView: UIView{
             imageView.isUserInteractionEnabled = true
             imageView.addGestureRecognizer(gesture)
         }
+    }
+    
+    public func setInternalScrollViewUserInteractionEnabled(isUserInteractionEnabled: Bool){
+        
+        self.scrollView.isUserInteractionEnabled = isUserInteractionEnabled
+    }
+    
+    public func getInternalScrollViewPanGesture() -> UIPanGestureRecognizer{
+        
+        return self.scrollView.panGestureRecognizer
     }
     
     fileprivate func loadVisibleImages(){
