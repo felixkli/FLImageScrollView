@@ -418,7 +418,7 @@ public class FLImageScrollView: UIView{
             
             imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
                 
-                if let error = error, image == nil{
+                if let _ = error, image == nil{
                     
                     imageView.image = UIImage(named: "broken_image")
                 }
