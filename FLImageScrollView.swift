@@ -16,6 +16,8 @@ public class FLImageScrollView: UIView{
     private let rightArrow = UIButton()
     private let numberLabel = UILabel()
     
+    private let spinner = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+    
     private let pageControlHeight: CGFloat = 20
     private let arrowControlHeight: CGFloat = 30
     private let arrowControlViewWidth: CGFloat = 140
@@ -24,6 +26,7 @@ public class FLImageScrollView: UIView{
     private var minImageRatio: CGFloat = 2
     
     private let captionLabelTopPadding: CGFloat = 10
+    
     
     // Public values
     
@@ -93,6 +96,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
+    
     init(){
         super.init(frame:CGRect.zero)
         defaultConfiguration()
@@ -124,6 +128,9 @@ public class FLImageScrollView: UIView{
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.delegate = self
         
+        spinner.hidesWhenStopped = true
+        spinner.startAnimating()
+        
         updatePageControl()
         
         let leftArrowSelector = #selector(FLImageScrollView.leftArrowTapped(sender:))
@@ -143,6 +150,8 @@ public class FLImageScrollView: UIView{
         addSubview(scrollView)
         addSubview(pageControl)
         addSubview(arrowControlView)
+        
+        addSubview(spinner)
         
         arrowControlView.addSubview(leftArrow)
         arrowControlView.addSubview(rightArrow)
@@ -266,6 +275,8 @@ public class FLImageScrollView: UIView{
             }
         }
         
+        spinner.frame = scrollView.bounds
+        
         scrollView.scrollRectToVisible(CGRect(x: CGFloat(pageControl.currentPage) * scrollView.bounds.width, y: 0, width: scrollView.bounds.width, height: 1), animated: false)
     }
     
@@ -277,7 +288,7 @@ public class FLImageScrollView: UIView{
         
         while displayingImageViewList.count < imageList.count{
             let imageView = UIImageView()
-            
+            imageView.alpha = 0
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
             
@@ -368,16 +379,6 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    public func setInternalScrollViewUserInteractionEnabled(isUserInteractionEnabled: Bool){
-        
-        self.scrollView.isUserInteractionEnabled = isUserInteractionEnabled
-    }
-    
-    public func getInternalScrollViewPanGesture() -> UIPanGestureRecognizer{
-        
-        return self.scrollView.panGestureRecognizer
-    }
-    
     fileprivate func loadVisibleImages(){
         
         if loadVisibleOnly{
@@ -415,7 +416,24 @@ public class FLImageScrollView: UIView{
             
             let imageView = displayingImageViewList[index]
             
-            imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "broken_image"), options: [], progress: nil, completed: nil)
+            imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
+                
+                if let error = error, image == nil{
+                    
+                    imageView.image = UIImage(named: "broken_image")
+                }
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    
+                    imageView.alpha = 1
+                    
+                }, completion: { (complete) in
+                    
+                    self.spinner.stopAnimating()
+                })
+                
+                self.layoutIfNeeded()
+            })
         }
     }
 }
