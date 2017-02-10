@@ -427,7 +427,7 @@ public class FLImageScrollView: UIView{
             
             let imageView = displayingImageViewList[index]
             
-            SDWebImageManager.shared().loadImage(with: linkURL, options: [], progress: nil, completed: { (image, data, error, cacheType, complete, url) in
+            SDWebImageManager.shared().loadImage(with: url, options: [], progress: nil, completed: { (image, data, error, cacheType, complete, url) in
                 
                 if let animatedImage = FLAnimatedImage(gifData: data){
                     self.thumbnailImageView.animatedImage = animatedImage
