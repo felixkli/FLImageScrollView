@@ -379,6 +379,16 @@ public class FLImageScrollView: UIView{
         }
     }
     
+    public func setInternalScrollViewUserInteractionEnabled(isUserInteractionEnabled: Bool){
+        
+        self.scrollView.isUserInteractionEnabled = isUserInteractionEnabled
+    }
+    
+    public func getInternalScrollViewPanGesture() -> UIPanGestureRecognizer{
+        
+        return self.scrollView.panGestureRecognizer
+    }
+    
     fileprivate func loadVisibleImages(){
         
         if loadVisibleOnly{
@@ -460,4 +470,3 @@ extension FLImageScrollView: UIScrollViewDelegate{
         }
     }
 }
-
