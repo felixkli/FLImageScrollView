@@ -430,9 +430,9 @@ public class FLImageScrollView: UIView{
             SDWebImageManager.shared().loadImage(with: url, options: [], progress: nil, completed: { (image, data, error, cacheType, complete, url) in
                 
                 if let animatedImage = FLAnimatedImage(gifData: data){
-                    self.thumbnailImageView.animatedImage = animatedImage
+                    self.imageView.animatedImage = animatedImage
                 }else{
-                    self.thumbnailImageView.image = image
+                    self.imageView.image = image
                 }
                 //            imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
                 
