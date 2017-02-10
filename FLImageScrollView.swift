@@ -1,5 +1,6 @@
 import Foundation
 import SDWebImage
+import FLAnimatedImage
 
 public enum ImageScrollIndicatorStyle{
     case pageControlBelow, pageControlOverContext, arrowControlBelow
@@ -8,7 +9,7 @@ public enum ImageScrollIndicatorStyle{
 public class FLImageScrollView: UIView{
     
     fileprivate let pageControl = UIPageControl()
-    fileprivate var displayingImageViewList: [UIImageView] = []
+    fileprivate var displayingImageViewList: [FLAnimatedImageView] = []
     
     private let scrollView = UIScrollView()
     private let arrowControlView = UIView()
@@ -287,7 +288,7 @@ public class FLImageScrollView: UIView{
         updateNumberLabel()
         
         while displayingImageViewList.count < imageList.count{
-            let imageView = UIImageView()
+            let imageView = FLAnimatedImageView()
             imageView.alpha = 0
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
@@ -426,7 +427,14 @@ public class FLImageScrollView: UIView{
             
             let imageView = displayingImageViewList[index]
             
-            imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
+            SDWebImageManager.shared().loadImage(with: linkURL, options: [], progress: nil, completed: { (image, data, error, cacheType, complete, url) in
+                
+                if let animatedImage = FLAnimatedImage(gifData: data){
+                    self.thumbnailImageView.animatedImage = animatedImage
+                }else{
+                    self.thumbnailImageView.image = image
+                }
+                //            imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
                 
                 if let _ = error, image == nil{
                     
