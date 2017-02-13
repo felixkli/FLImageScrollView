@@ -1,6 +1,5 @@
 import Foundation
 import SDWebImage
-import FLAnimatedImage
 
 public enum ImageScrollIndicatorStyle{
     case pageControlBelow, pageControlOverContext, arrowControlBelow
