@@ -288,6 +288,7 @@ public class FLImageScrollView: UIView{
         
         while displayingImageViewList.count < imageList.count{
             let imageView = FLAnimatedImageView()
+            //            imageView.isHidden = true
             //            imageView.alpha = 0
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
@@ -435,7 +436,13 @@ public class FLImageScrollView: UIView{
                     imageView.image = UIImage(named: "broken_image")
                 }
                 
-                imageView.alpha = 0
+                if cacheType == SDImageCacheType.memory {
+                    
+                }else{
+                    
+                    imageView.alpha = 0
+                }
+                
                 UIView.animate(withDuration: 0.3, animations: {
                     
                     imageView.alpha = 1
@@ -447,33 +454,6 @@ public class FLImageScrollView: UIView{
                 
                 self.layoutIfNeeded()
             })
-            
-            
-            //            SDWebImageManager.shared().loadImage(with: url, options: [], progress: nil, completed: { (image, data, error, cacheType, complete, url) in
-            //
-            //                if let animatedImage = FLAnimatedImage(gifData: data){
-            //                    imageView.animatedImage = animatedImage
-            //                }else{
-            //                    imageView.image = image
-            //                }
-            //                //            imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
-            //
-            //                if let _ = error, image == nil{
-            //
-            //                    imageView.image = UIImage(named: "broken_image")
-            //                }
-            //
-            //                UIView.animate(withDuration: 0.3, animations: {
-            //
-            //                    imageView.alpha = 1
-            //
-            //                }, completion: { (complete) in
-            //
-            //                    self.spinner.stopAnimating()
-            //                })
-            //
-            //                self.layoutIfNeeded()
-            //            })
         }
     }
 }
