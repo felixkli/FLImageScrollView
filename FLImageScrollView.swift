@@ -16,8 +16,6 @@ public class FLImageScrollView: UIView{
     private let rightArrow = UIButton()
     private let numberLabel = UILabel()
     
-    //    private let spinner = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
-    
     private let pageControlHeight: CGFloat = 20
     private let arrowControlHeight: CGFloat = 30
     private let arrowControlViewWidth: CGFloat = 140
@@ -116,20 +114,10 @@ public class FLImageScrollView: UIView{
     
     private func defaultConfiguration(){
         
-        //                backgroundColor = UIColor.purpleColor()
-        //                leftArrow.backgroundColor = UIColor.greenColor()
-        //                rightArrow.backgroundColor = UIColor.greenColor()
-        //                arrowControlView.backgroundColor = UIColor.yellowColor()
-        //                pageControl.backgroundColor = UIColor.yellowColor()
-        
-        
         scrollView.backgroundColor = UIColor.clear
         scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.delegate = self
-        
-        //        spinner.hidesWhenStopped = true
-        //        spinner.startAnimating()
         
         updatePageControl()
         
@@ -150,8 +138,6 @@ public class FLImageScrollView: UIView{
         addSubview(scrollView)
         addSubview(pageControl)
         addSubview(arrowControlView)
-        
-        //        addSubview(spinner)
         
         arrowControlView.addSubview(leftArrow)
         arrowControlView.addSubview(rightArrow)
@@ -275,8 +261,6 @@ public class FLImageScrollView: UIView{
             }
         }
         
-        //        spinner.frame = scrollView.bounds
-        
         scrollView.scrollRectToVisible(CGRect(x: CGFloat(pageControl.currentPage) * scrollView.bounds.width, y: 0, width: scrollView.bounds.width, height: 1), animated: false)
     }
     
@@ -287,9 +271,8 @@ public class FLImageScrollView: UIView{
         updateNumberLabel()
         
         while displayingImageViewList.count < imageList.count{
+            
             let imageView = FLAnimatedImageView()
-            //            imageView.isHidden = true
-            //            imageView.alpha = 0
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
             
@@ -431,14 +414,10 @@ public class FLImageScrollView: UIView{
             imageView.sd_setIndicatorStyle(.gray)
             imageView.sd_setImage(with: url, placeholderImage: nil, options: [], progress: nil, completed: { (image, error, cacheType, url) in
                 
-                if let _ = error, image == nil{
-                    
+                if let error = error, image == nil{
                     imageView.image = UIImage(named: "broken_image")
-                }
-                
-                if cacheType == SDImageCacheType.memory {
                     
-                }else{
+                }else if cacheType != SDImageCacheType.memory {
                     
                     imageView.alpha = 0
                 }
@@ -446,10 +425,6 @@ public class FLImageScrollView: UIView{
                 UIView.animate(withDuration: 0.3, animations: {
                     
                     imageView.alpha = 1
-                    
-                }, completion: { (complete) in
-                    
-                    //                    self.spinner.stopAnimating()
                 })
                 
                 self.layoutIfNeeded()
