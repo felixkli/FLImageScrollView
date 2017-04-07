@@ -432,6 +432,11 @@ public class FLImageScrollView: UIView{
             })
         }
     }
+    
+    public func sourceView() -> UIView{
+        
+        return self.displayingImageViewList[currentPage]
+    }
 }
 
 //MARK: - UIScrollViewDelegate
