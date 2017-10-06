@@ -309,7 +309,7 @@ public class FLImageScrollView: UIView{
             let imageView = FLAnimatedImageView()
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
-            imageView.backgroundColor = UIColor.purple
+//            imageView.backgroundColor = UIColor.purple
             
             if hasCaption{
                 let captionLabel = UILabel()
