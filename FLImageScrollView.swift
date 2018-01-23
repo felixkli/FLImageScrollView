@@ -71,17 +71,17 @@ public class FLImageScrollView: UIView{
     
     public var indicatorStyle: ImageScrollIndicatorStyle = .pageControlBelow{
         didSet{
-            updateControlHeight()
+            
+            if indicatorStyle != oldValue {
+                updateControlHeight()
+            }
         }
     }
     
     public var imageContentMode: UIViewContentMode = .scaleAspectFit{
         didSet{
-            updateScrollViewContent()
             
-            //            for imageView in displayingImageViewList{
-            //                imageView.contentMode = imageContentMode
-            //            }
+            updateScrollViewContent()
         }
     }
     
@@ -300,12 +300,16 @@ public class FLImageScrollView: UIView{
             
             let indexFloat = CGFloat(index)
             
-            imageView.frame = CGRect(x: imageMargin + indexFloat * imageWidth + CGFloat(index) * imageSpacing, y: 0, width: imageWidth, height: self.scrollView.bounds.height - captionLabelHeight)
+            imageView.frame = CGRect(x: self.imageMargin + indexFloat * imageWidth + CGFloat(index) * self.imageSpacing, y: 0, width: imageWidth, height: self.scrollView.bounds.height - self.captionLabelHeight)
             
-            if hasCaption{
+            if self.hasCaption{
                 
-                let captionLabel = displayingCaptionLabelList[index]
+                let captionLabel = self.displayingCaptionLabelList[index]
+                
+                captionLabel.preferredMaxLayoutWidth = imageWidth
                 captionLabel.frame.origin = CGPoint(x: imageView.frame.origin.x, y: imageView.bounds.height + self.captionLabelTopPadding)
+                captionLabel.sizeToFit()
+                captionLabel.frame.size = CGSize(width: imageWidth, height: self.captionLabelHeight - self.captionLabelTopPadding)
                 captionLabel.sizeToFit()
             }
         }
@@ -432,6 +436,7 @@ public class FLImageScrollView: UIView{
                 if self.shouldLoadCurrentIndex(index: imageIndex){
                     
                     if displayingImageViewList[imageIndex].image == nil{
+                        
                         loadImageForIndex(index: imageIndex)
                     }
                     
