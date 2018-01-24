@@ -296,21 +296,26 @@ public class FLImageScrollView: UIView{
             numberLabel.frame = CGRect(x: arrowControlHeight, y: 0, width: arrowControlView.frame.width - arrowControlHeight * 2, height: arrowControlHeight)
         }
         
-        for (index, imageView) in displayingImageViewList.enumerated(){
-            
-            let indexFloat = CGFloat(index)
-            
-            imageView.frame = CGRect(x: self.imageMargin + indexFloat * imageWidth + CGFloat(index) * self.imageSpacing, y: 0, width: imageWidth, height: self.scrollView.bounds.height - self.captionLabelHeight)
-            
-            if self.hasCaption{
+        if bounds.height > 1 {
+            for (index, imageView) in displayingImageViewList.enumerated(){
                 
-                let captionLabel = self.displayingCaptionLabelList[index]
+                let indexFloat = CGFloat(index)
                 
-                captionLabel.preferredMaxLayoutWidth = imageWidth
-                captionLabel.frame.origin = CGPoint(x: imageView.frame.origin.x, y: imageView.bounds.height + self.captionLabelTopPadding)
-                captionLabel.sizeToFit()
-                captionLabel.frame.size = CGSize(width: imageWidth, height: self.captionLabelHeight - self.captionLabelTopPadding)
-                captionLabel.sizeToFit()
+                UIView.performWithoutAnimation {
+                    
+                    imageView.frame = CGRect(x: self.imageMargin + indexFloat * imageWidth + CGFloat(index) * self.imageSpacing, y: 0, width: imageWidth, height: self.scrollView.bounds.height - self.captionLabelHeight)
+                    
+                    if self.hasCaption{
+                        
+                        let captionLabel = self.displayingCaptionLabelList[index]
+                        
+                        captionLabel.preferredMaxLayoutWidth = imageWidth
+                        captionLabel.frame.origin = CGPoint(x: imageView.frame.origin.x, y: imageView.bounds.height + self.captionLabelTopPadding)
+                        captionLabel.sizeToFit()
+                        captionLabel.frame.size = CGSize(width: imageWidth, height: self.captionLabelHeight - self.captionLabelTopPadding)
+                        captionLabel.sizeToFit()
+                    }
+                }
             }
         }
     }
