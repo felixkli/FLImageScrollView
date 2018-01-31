@@ -153,6 +153,7 @@ public class FLImageScrollView: UIView{
         scrollView.backgroundColor = UIColor.clear
         scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.canCancelContentTouches = true
         scrollView.delegate = self
         
         updatePageControl()
@@ -434,21 +435,23 @@ public class FLImageScrollView: UIView{
     
     fileprivate func loadVisibleImages(){
         
-        if loadVisibleOnly{
+        guard loadVisibleOnly else {
             
-            for (imageIndex, imageView) in self.displayingImageViewList.enumerated(){
+            return
+        }
+        
+        for (imageIndex, imageView) in self.displayingImageViewList.enumerated(){
+            
+            if self.shouldLoadCurrentIndex(index: imageIndex){
                 
-                if self.shouldLoadCurrentIndex(index: imageIndex){
+                if displayingImageViewList[imageIndex].image == nil{
                     
-                    if displayingImageViewList[imageIndex].image == nil{
-                        
-                        loadImageForIndex(index: imageIndex)
-                    }
-                    
-                }else if imageView.image != nil {
-                    
-                    imageView.image = nil
+                    loadImageForIndex(index: imageIndex)
                 }
+                
+            }else if imageView.image != nil {
+                
+                imageView.image = nil
             }
         }
     }
@@ -559,6 +562,8 @@ public class FLImageScrollView: UIView{
 extension FLImageScrollView: UIScrollViewDelegate{
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        //        scrollView.isDirectionalLockEnabled = true
         
         let width = self.imageWidth ?? scrollView.bounds.width;
         let wholePage = Int((scrollView.contentOffset.x + (0.5 * width)) / width);
