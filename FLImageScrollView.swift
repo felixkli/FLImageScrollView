@@ -246,7 +246,7 @@ public class FLImageScrollView: UIView{
                     
                     let constraintRect = CGSize(width: bounds.width - 20, height: CGFloat.greatestFiniteMagnitude)
                     
-                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 14)], context: nil)
+                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)], context: nil)
                     
                     captionLabelHeight = max(boundingBox.height, captionLabelHeight - self.captionLabelTopPadding) + self.captionLabelTopPadding
                 }
@@ -387,7 +387,7 @@ public class FLImageScrollView: UIView{
         layoutIfNeeded()
     }
     
-    func leftArrowTapped(sender: AnyObject){
+    @objc func leftArrowTapped(sender: AnyObject){
         
         if pageControl.currentPage > 0{
             
@@ -397,7 +397,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    func rightArrowTapped(sender: AnyObject){
+    @objc func rightArrowTapped(sender: AnyObject){
         
         if pageControl.currentPage + 1 < pageControl.numberOfPages{
             
