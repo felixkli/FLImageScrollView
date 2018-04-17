@@ -107,6 +107,8 @@ public class FLImageScrollView: UIView{
         }
     }
     
+    public var isSnapEnabled = false
+    
     public var imageWidth: CGFloat? {
         didSet{
             
@@ -130,7 +132,7 @@ public class FLImageScrollView: UIView{
     }
     
     public private(set) var lastTouchIndex: Int = 0
-    
+    public private(set) var beginScrollContentX: CGFloat = 0
     
     init(){
         super.init(frame:CGRect.zero)
@@ -562,6 +564,11 @@ public class FLImageScrollView: UIView{
 
 extension FLImageScrollView: UIScrollViewDelegate{
     
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        
+        beginScrollContentX = scrollView.contentOffset.x
+    }
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         //        scrollView.isDirectionalLockEnabled = true
@@ -581,6 +588,26 @@ extension FLImageScrollView: UIScrollViewDelegate{
         }
         
         loadVisibleImages()
+    }
+    
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        if !isPagingEnabled && isSnapEnabled {
+            
+            let width: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
+            let wholePage = Int((targetContentOffset.pointee.x + (0.5 * width)) / width);
+            
+            switch wholePage {
+            case 0:
+                targetContentOffset.pointee.x = CGFloat(wholePage) * (width + imageSpacing)
+                
+            case self.imageList.count - 1:
+                targetContentOffset.pointee.x =  scrollView.contentSize.width - self.scrollView.bounds.width
+                
+            default:
+                targetContentOffset.pointee.x = imageMargin + CGFloat(wholePage) * (width + imageSpacing) - (self.scrollView.bounds.width - width) / 2
+            }
+        }
     }
 }
 
