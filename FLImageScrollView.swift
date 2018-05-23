@@ -571,8 +571,6 @@ extension FLImageScrollView: UIScrollViewDelegate{
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        //        scrollView.isDirectionalLockEnabled = true
-        
         let width = self.imageWidth ?? scrollView.bounds.width;
         let wholePage = Int((scrollView.contentOffset.x + (0.5 * width)) / width);
         
@@ -597,14 +595,11 @@ extension FLImageScrollView: UIScrollViewDelegate{
             let width: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
             let wholePage = Int((targetContentOffset.pointee.x + (0.5 * width)) / width);
             
-            switch wholePage {
-            case 0:
-                targetContentOffset.pointee.x = CGFloat(wholePage) * (width + imageSpacing)
-                
-            case self.imageList.count - 1:
-                targetContentOffset.pointee.x =  scrollView.contentSize.width - self.scrollView.bounds.width
-                
+            switch targetContentOffset.pointee.x {
+            case let targetX where targetX <= 0.0: break
+            case let targetX where targetX >= scrollView.contentSize.width - self.scrollView.bounds.width: break
             default:
+                
                 targetContentOffset.pointee.x = imageMargin + CGFloat(wholePage) * (width + imageSpacing) - (self.scrollView.bounds.width - width) / 2
             }
         }
