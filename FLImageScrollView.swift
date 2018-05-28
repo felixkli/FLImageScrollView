@@ -131,6 +131,20 @@ public class FLImageScrollView: UIView{
         }
     }
     
+    public var captionFont: UIFont = UIFont.systemFont(ofSize: 14){
+        didSet{
+            
+            self.updateLabelFont()
+        }
+    }
+    
+    public var pageNumberFont: UIFont = UIFont.systemFont(ofSize: 14){
+        didSet{
+            
+            self.updateLabelFont()
+        }
+    }
+    
     public private(set) var lastTouchIndex: Int = 0
     public private(set) var beginScrollContentX: CGFloat = 0
     
@@ -173,7 +187,6 @@ public class FLImageScrollView: UIView{
         rightArrow.contentMode = .scaleAspectFit
         
         numberLabel.textAlignment = .center
-        numberLabel.font = UIFont.systemFont(ofSize: 14)
         numberLabel.textColor = UIColor.gray
         
         addSubview(scrollView)
@@ -184,6 +197,7 @@ public class FLImageScrollView: UIView{
         arrowControlView.addSubview(rightArrow)
         arrowControlView.addSubview(numberLabel)
         
+        updateLabelFont()
         updateScrollViewContent()
     }
     
@@ -249,12 +263,20 @@ public class FLImageScrollView: UIView{
                     
                     let constraintRect = CGSize(width: bounds.width - 20, height: CGFloat.greatestFiniteMagnitude)
                     
-                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)], context: nil)
+                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: self.captionFont], context: nil)
                     
                     captionLabelHeight = max(boundingBox.height, captionLabelHeight - self.captionLabelTopPadding) + self.captionLabelTopPadding
                 }
             }
         }
+    }
+    
+    func updateLabelFont() {
+        
+        self.numberLabel.font = self.pageNumberFont
+        
+        self.updateScrollViewContent()
+        self.updateControlHeight()
     }
     
     override public func layoutSubviews() {
@@ -340,7 +362,7 @@ public class FLImageScrollView: UIView{
                 let captionLabel = UILabel()
                 
                 captionLabel.textColor = UIColor.gray
-                captionLabel.font = UIFont.systemFont(ofSize: 14)
+                captionLabel.font = self.captionFont
                 captionLabel.numberOfLines = 0
                 
                 scrollView.addSubview(captionLabel)
@@ -571,8 +593,10 @@ extension FLImageScrollView: UIScrollViewDelegate{
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        let width = self.imageWidth ?? scrollView.bounds.width;
-        let wholePage = Int((scrollView.contentOffset.x + (0.5 * width)) / width);
+        let width: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
+        
+        let centerPoint: CGFloat = scrollView.contentOffset.x + scrollView.bounds.width / 2
+        let wholePage = Int((centerPoint - self.imageMargin ) / (width + imageSpacing))
         
         if pageControl.currentPage != wholePage{
             
@@ -593,7 +617,9 @@ extension FLImageScrollView: UIScrollViewDelegate{
         if !isPagingEnabled && isSnapEnabled {
             
             let width: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-            let wholePage = Int((targetContentOffset.pointee.x + (0.5 * width)) / width);
+            
+            let centerPoint: CGFloat = targetContentOffset.pointee.x + scrollView.bounds.width / 2
+            let wholePage = Int((centerPoint - self.imageMargin ) / (width + imageSpacing))
             
             switch targetContentOffset.pointee.x {
             case let targetX where targetX <= 0.0: break
@@ -605,4 +631,3 @@ extension FLImageScrollView: UIScrollViewDelegate{
         }
     }
 }
-
