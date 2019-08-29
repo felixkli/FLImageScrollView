@@ -1,9 +1,9 @@
 import Foundation
-import UIKit
 import SDWebImage
+import FLAnimatedImage
 
 public enum ImageScrollIndicatorStyle{
-    case pageControlBelow, pageControlOverContext, arrowControlBelow, none
+    case pageControlBelow, pageControlOverContext, arrowControlBelow
 }
 
 public class FLImageScrollView: UIView{
@@ -16,6 +16,8 @@ public class FLImageScrollView: UIView{
     private let leftArrow = UIButton()
     private let rightArrow = UIButton()
     private let numberLabel = UILabel()
+    
+    private let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
     
     private let pageControlHeight: CGFloat = 20
     private let arrowControlHeight: CGFloat = 30
@@ -59,7 +61,6 @@ public class FLImageScrollView: UIView{
     
     public var imageList: [String] = []{
         didSet{
-            
             updateScrollViewContent()
         }
     }
@@ -72,16 +73,12 @@ public class FLImageScrollView: UIView{
     
     public var indicatorStyle: ImageScrollIndicatorStyle = .pageControlBelow{
         didSet{
-            
-            if indicatorStyle != oldValue {
-                updateControlHeight()
-            }
+            updateControlHeight()
         }
     }
     
     public var imageContentMode: UIView.ContentMode = .scaleAspectFit{
         didSet{
-            
             updateScrollViewContent()
         }
     }
@@ -100,53 +97,6 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    public var isPagingEnabled = true {
-        didSet{
-            
-            self.scrollView.isPagingEnabled = self.isPagingEnabled
-        }
-    }
-    
-    public var isSnapEnabled = false
-    
-    public var imageWidth: CGFloat? {
-        didSet{
-            
-            setNeedsLayout()
-            layoutIfNeeded()
-        }
-    }
-    public var imageMargin: CGFloat = 0 {
-        didSet{
-            
-            setNeedsLayout()
-            layoutIfNeeded()
-        }
-    }
-    public var imageSpacing: CGFloat = 0 {
-        didSet{
-            
-            setNeedsLayout()
-            layoutIfNeeded()
-        }
-    }
-    
-    public var captionFont: UIFont = UIFont.systemFont(ofSize: 14){
-        didSet{
-            
-            self.updateLabelFont()
-        }
-    }
-    
-    public var pageNumberFont: UIFont = UIFont.systemFont(ofSize: 14){
-        didSet{
-            
-            self.updateLabelFont()
-        }
-    }
-    
-    public private(set) var lastTouchIndex: Int = 0
-    public private(set) var beginScrollContentX: CGFloat = 0
     
     init(){
         super.init(frame:CGRect.zero)
@@ -167,11 +117,20 @@ public class FLImageScrollView: UIView{
     
     private func defaultConfiguration(){
         
+        //                backgroundColor = UIColor.purpleColor()
+        //                leftArrow.backgroundColor = UIColor.greenColor()
+        //                rightArrow.backgroundColor = UIColor.greenColor()
+        //                arrowControlView.backgroundColor = UIColor.yellowColor()
+        //                pageControl.backgroundColor = UIColor.yellowColor()
+        
+        
         scrollView.backgroundColor = UIColor.clear
         scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
-        scrollView.canCancelContentTouches = true
         scrollView.delegate = self
+        
+        spinner.hidesWhenStopped = true
+        spinner.startAnimating()
         
         updatePageControl()
         
@@ -187,17 +146,18 @@ public class FLImageScrollView: UIView{
         rightArrow.contentMode = .scaleAspectFit
         
         numberLabel.textAlignment = .center
-        numberLabel.textColor = UIColor.gray
+        numberLabel.font = UIFont.systemFont(ofSize: 14)
         
         addSubview(scrollView)
         addSubview(pageControl)
         addSubview(arrowControlView)
         
+        addSubview(spinner)
+        
         arrowControlView.addSubview(leftArrow)
         arrowControlView.addSubview(rightArrow)
         arrowControlView.addSubview(numberLabel)
         
-        updateLabelFont()
         updateScrollViewContent()
     }
     
@@ -218,12 +178,7 @@ public class FLImageScrollView: UIView{
             hasCaption = true
         }
         
-        if indicatorStyle == .none {
-            
-            pageControl.isHidden = true
-            arrowControlView.isHidden = true
-            
-        } else if indicatorStyle == .pageControlBelow{
+        if indicatorStyle == .pageControlBelow{
             
             pageControl.isHidden = false
             arrowControlView.isHidden = true
@@ -231,6 +186,7 @@ public class FLImageScrollView: UIView{
             if imageList.count > 1{
                 indicatorAreaHeight += indicatorControlTopPadding + pageControlHeight
             }
+            
             
         }else if indicatorStyle == .pageControlOverContext{
             
@@ -263,7 +219,7 @@ public class FLImageScrollView: UIView{
                     
                     let constraintRect = CGSize(width: bounds.width - 20, height: CGFloat.greatestFiniteMagnitude)
                     
-                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: self.captionFont], context: nil)
+                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)], context: nil)
                     
                     captionLabelHeight = max(boundingBox.height, captionLabelHeight - self.captionLabelTopPadding) + self.captionLabelTopPadding
                 }
@@ -271,31 +227,14 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    func updateLabelFont() {
-        
-        self.numberLabel.font = self.pageNumberFont
-        
-        self.updateScrollViewContent()
-        self.updateControlHeight()
-    }
-    
     override public func layoutSubviews() {
         super.layoutSubviews()
         
         updateControlHeight()
         
-        let imageWidth: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-        let imageListCount: CGFloat = CGFloat(imageList.count)
-        let scrollViewContentWidth: CGFloat = imageListCount * imageWidth + (imageListCount) * imageSpacing + imageMargin * 2 - imageSpacing
-        
-        if indicatorStyle == .none {
+        if indicatorStyle == .pageControlBelow{
             
-            scrollView.contentSize = CGSize(width: scrollViewContentWidth, height: bounds.height)
-            scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
-            
-        } else if indicatorStyle == .pageControlBelow{
-            
-            scrollView.contentSize = CGSize(width: scrollViewContentWidth, height: bounds.height - indicatorAreaHeight)
+            scrollView.contentSize = CGSize(width: CGFloat(imageList.count) * bounds.width, height: bounds.height - indicatorAreaHeight)
             scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height - indicatorAreaHeight)
             
             pageControl.center = scrollView.center
@@ -303,15 +242,14 @@ public class FLImageScrollView: UIView{
             
         }else if indicatorStyle == .pageControlOverContext{
             
-            scrollView.contentSize = CGSize(width: scrollViewContentWidth, height: bounds.height)
+            scrollView.contentSize = CGSize(width: CGFloat(imageList.count) * bounds.width, height: bounds.height)
             scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
             
             pageControl.center = scrollView.center
             pageControl.frame = CGRect(x:pageControl.frame.origin.x, y: scrollView.bounds.height - captionLabelHeight - pageControlOffsetFromBottom, width: pageControl.bounds.width, height: pageControlHeight)
-            
         }else if indicatorStyle == .arrowControlBelow{
             
-            scrollView.contentSize = CGSize(width: scrollViewContentWidth, height: bounds.height - indicatorAreaHeight)
+            scrollView.contentSize = CGSize(width: CGFloat(imageList.count) * bounds.width, height: bounds.height - indicatorAreaHeight)
             scrollView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height - indicatorAreaHeight)
             
             arrowControlView.center = scrollView.center
@@ -322,28 +260,25 @@ public class FLImageScrollView: UIView{
             numberLabel.frame = CGRect(x: arrowControlHeight, y: 0, width: arrowControlView.frame.width - arrowControlHeight * 2, height: arrowControlHeight)
         }
         
-        if bounds.height > 1 {
-            for (index, imageView) in displayingImageViewList.enumerated(){
+        
+        for (index, imageView) in displayingImageViewList.enumerated(){
+            
+            let indexFloat = CGFloat(index)
+            
+            imageView.frame = CGRect(x: indexFloat * self.scrollView.bounds.width, y: 0, width: self.scrollView.bounds.width, height: self.scrollView.bounds.height - captionLabelHeight)
+            
+            if hasCaption{
                 
-                let indexFloat = CGFloat(index)
+                let captionLabel = displayingCaptionLabelList[index]
+                captionLabel.frame = CGRect(x: indexFloat * self.scrollView.bounds.width + 10, y: imageView.bounds.height + self.captionLabelTopPadding, width: self.scrollView.bounds.width - 20, height: captionLabelHeight - self.captionLabelTopPadding)
                 
-                UIView.performWithoutAnimation {
-                    
-                    imageView.frame = CGRect(x: self.imageMargin + indexFloat * imageWidth + CGFloat(index) * self.imageSpacing, y: 0, width: imageWidth, height: self.scrollView.bounds.height - self.captionLabelHeight)
-                    
-                    if self.hasCaption{
-                        
-                        let captionLabel = self.displayingCaptionLabelList[index]
-                        
-                        captionLabel.preferredMaxLayoutWidth = imageWidth
-                        captionLabel.frame.origin = CGPoint(x: imageView.frame.origin.x, y: imageView.bounds.height + self.captionLabelTopPadding)
-                        captionLabel.sizeToFit()
-                        captionLabel.frame.size = CGSize(width: imageWidth, height: self.captionLabelHeight - self.captionLabelTopPadding)
-                        captionLabel.sizeToFit()
-                    }
-                }
+                captionLabel.sizeToFit()
             }
         }
+        
+        spinner.frame = scrollView.bounds
+        
+        scrollView.scrollRectToVisible(CGRect(x: CGFloat(pageControl.currentPage) * scrollView.bounds.width, y: 0, width: scrollView.bounds.width, height: 1), animated: false)
     }
     
     private func updateScrollViewContent(){
@@ -353,8 +288,8 @@ public class FLImageScrollView: UIView{
         updateNumberLabel()
         
         while displayingImageViewList.count < imageList.count{
-            
             let imageView = FLAnimatedImageView()
+            imageView.alpha = 0
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
             
@@ -362,7 +297,7 @@ public class FLImageScrollView: UIView{
                 let captionLabel = UILabel()
                 
                 captionLabel.textColor = UIColor.gray
-                captionLabel.font = self.captionFont
+                captionLabel.font = UIFont.systemFont(ofSize: 14)
                 captionLabel.numberOfLines = 0
                 
                 scrollView.addSubview(captionLabel)
@@ -416,8 +351,7 @@ public class FLImageScrollView: UIView{
         
         if pageControl.currentPage > 0{
             
-            let imageWidth: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-            scrollView.setContentOffset(CGPoint(x: imageMargin + CGFloat(pageControl.currentPage - 1) * (imageWidth + imageSpacing) - (self.scrollView.bounds.width - imageWidth) / 2, y: 0), animated: true)
+            scrollView.setContentOffset(CGPoint(x: CGFloat(pageControl.currentPage - 1) * scrollView.bounds.width, y: 0), animated: true)
             loadVisibleImages()
         }
     }
@@ -426,9 +360,7 @@ public class FLImageScrollView: UIView{
         
         if pageControl.currentPage + 1 < pageControl.numberOfPages{
             
-            let imageWidth: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-            
-            scrollView.setContentOffset(CGPoint(x: imageMargin + CGFloat(pageControl.currentPage + 1) * (imageWidth + imageSpacing) - (self.scrollView.bounds.width - imageWidth) / 2, y: 0), animated: true)
+            scrollView.setContentOffset(CGPoint(x: CGFloat(pageControl.currentPage + 1) * scrollView.bounds.width, y: 0), animated: true)
             loadVisibleImages()
         }
     }
@@ -460,34 +392,26 @@ public class FLImageScrollView: UIView{
     
     fileprivate func loadVisibleImages(){
         
-        guard loadVisibleOnly else {
+        if loadVisibleOnly{
             
-            return
-        }
-        
-        for (imageIndex, imageView) in self.displayingImageViewList.enumerated(){
-            
-            if self.shouldLoadCurrentIndex(index: imageIndex){
+            for (imageIndex, imageView) in self.displayingImageViewList.enumerated(){
                 
-                if displayingImageViewList[imageIndex].image == nil{
+                if self.shouldLoadCurrentIndex(index: imageIndex){
                     
-                    loadImageForIndex(index: imageIndex)
+                    if displayingImageViewList[imageIndex].image == nil{
+                        loadImageForIndex(index: imageIndex)
+                    }
+                }else{
+                    
+                    imageView.image = nil
                 }
-                
-            }else if imageView.image != nil {
-                
-                imageView.image = nil
             }
         }
     }
     
     private func shouldLoadCurrentIndex(index: Int) -> Bool{
         
-        var contentBox = CGRect.zero
-        contentBox.origin = self.scrollView.contentOffset
-        contentBox.size = self.scrollView.contentSize
-        
-        return self.displayingImageViewList[index].frame.intersects(contentBox)
+        return index == pageControl.currentPage || index == pageControl.currentPage + 1 || index == pageControl.currentPage - 1
     }
     
     private func loadImageForIndex(index: Int){
@@ -503,81 +427,31 @@ public class FLImageScrollView: UIView{
             
             let imageView = displayingImageViewList[index]
             
-            imageView.sd_setShowActivityIndicatorView(true)
-            imageView.sd_setIndicatorStyle(.gray)
-            
-            imageView.sd_setImage(with: url, placeholderImage: nil, options: [SDWebImageOptions.avoidAutoSetImage], progress: nil, completed: { (image, error, cacheType, url) in
+            SDWebImageManager.shared.loadImage(with: url, options: [], progress: nil, completed: { (image, data, error, cacheType, complete, url) in
                 
-                imageView.image = image
+                if let animatedImage = FLAnimatedImage(gifData: data){
+                    imageView.animatedImage = animatedImage
+                }else{
+                    imageView.image = image
+                }
+                //            imageView.sd_setImage(with: url, completed: { (image, error, cacheType, url) in
                 
                 if let _ = error, image == nil{
                     
                     imageView.image = UIImage(named: "broken_image")
-                    
-                }else if cacheType != SDImageCacheType.memory {
-                    
-                    imageView.alpha = 0
-                }else{
-                    
                 }
                 
                 UIView.animate(withDuration: 0.3, animations: {
                     
                     imageView.alpha = 1
+                    
+                }, completion: { (complete) in
+                    
+                    self.spinner.stopAnimating()
                 })
                 
                 self.layoutIfNeeded()
             })
-        }
-    }
-    
-    public func setCurrentImagePage(index: Int) {
-        
-        let imageWidth: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-        
-        if index == 0 {
-            
-            scrollView.setContentOffset(CGPoint(x: CGFloat(index) * (imageWidth + imageSpacing), y: 0), animated: true)
-            
-        } else if index == self.imageList.count - 1 {
-            
-            scrollView.setContentOffset(CGPoint(x: scrollView.contentSize.width - self.scrollView.bounds.width, y: 0), animated: true)
-            
-        } else {
-            
-            scrollView.setContentOffset(CGPoint(x: imageMargin + CGFloat(index) * (imageWidth + imageSpacing) - (self.scrollView.bounds.width - imageWidth) / 2, y: 0), animated: true)
-        }
-        
-        loadVisibleImages()
-    }
-    
-    public func imageView(for index: Int) -> FLAnimatedImageView? {
-        
-        if self.displayingImageViewList.count > index {
-            
-            return self.displayingImageViewList[index]
-        }
-        
-        return nil
-    }
-    
-    public func sourceView() -> UIView{
-        
-        return self.displayingImageViewList[currentPage]
-    }
-    
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        
-        if let touch = touches.first {
-            
-            let location = touch.location(in: self)
-            
-            let contentWidth = scrollView.contentSize.width - imageMargin * 2
-            let imageWidth = contentWidth / CGFloat(self.displayingImageViewList.count)
-            let currentIndex = Int((scrollView.contentOffset.x + location.x - imageMargin) / imageWidth)
-            
-            self.lastTouchIndex = currentIndex
         }
     }
 }
@@ -586,48 +460,21 @@ public class FLImageScrollView: UIView{
 
 extension FLImageScrollView: UIScrollViewDelegate{
     
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        
-        beginScrollContentX = scrollView.contentOffset.x
-    }
-    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
-        let width: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-        
-        let centerPoint: CGFloat = scrollView.contentOffset.x + scrollView.bounds.width / 2
-        let wholePage = Int((centerPoint - self.imageMargin ) / (width + imageSpacing))
+        let width = scrollView.frame.size.width;
+        let wholePage = Int((scrollView.contentOffset.x + (0.5 * width)) / width);
         
         if pageControl.currentPage != wholePage{
             
             pageControl.currentPage = wholePage
             
             updateNumberLabel()
+            loadVisibleImages()
             
             let imageView = displayingImageViewList[pageControl.currentPage]
             
             scrollView.bringSubviewToFront(imageView)
-        }
-        
-        loadVisibleImages()
-    }
-    
-    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
-        if !isPagingEnabled && isSnapEnabled {
-            
-            let width: CGFloat = self.imageWidth ?? self.scrollView.bounds.width
-            
-            let centerPoint: CGFloat = targetContentOffset.pointee.x + scrollView.bounds.width / 2
-            let wholePage = Int((centerPoint - self.imageMargin ) / (width + imageSpacing))
-            
-            switch targetContentOffset.pointee.x {
-            case let targetX where targetX <= 0.0: break
-            case let targetX where targetX >= scrollView.contentSize.width - self.scrollView.bounds.width: break
-            default:
-                
-                targetContentOffset.pointee.x = imageMargin + CGFloat(wholePage) * (width + imageSpacing) - (self.scrollView.bounds.width - width) / 2
-            }
         }
     }
 }
