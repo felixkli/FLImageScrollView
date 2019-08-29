@@ -504,11 +504,12 @@ public class FLImageScrollView: UIView{
             
             let imageView = displayingImageViewList[index]
             
-            imageView.sd_setShowActivityIndicatorView(true)
-            imageView.sd_setIndicatorStyle(.gray)
+            imageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+            imageView.sd_imageIndicator?.startAnimatingIndicator()
             
             imageView.sd_setImage(with: url, placeholderImage: nil, options: [SDWebImageOptions.avoidAutoSetImage], progress: nil, completed: { (image, error, cacheType, url) in
-                
+            
+                imageView.sd_imageIndicator?.stopAnimatingIndicator()
                 imageView.image = image
                 
                 if let _ = error, image == nil{
