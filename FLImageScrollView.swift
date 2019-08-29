@@ -40,7 +40,7 @@ public class FLImageScrollView: UIView{
     
     public var leftArrowImage: UIImage?{
         didSet{
-            leftArrow.setImage(leftArrowImage, for: UIControlState.normal)
+            leftArrow.setImage(leftArrowImage, for: UIControl.State.normal)
         }
     }
     
@@ -79,7 +79,7 @@ public class FLImageScrollView: UIView{
         }
     }
     
-    public var imageContentMode: UIViewContentMode = .scaleAspectFit{
+    public var imageContentMode: UIView.ContentMode = .scaleAspectFit{
         didSet{
             
             updateScrollViewContent()
@@ -263,7 +263,7 @@ public class FLImageScrollView: UIView{
                     
                     let constraintRect = CGSize(width: bounds.width - 20, height: CGFloat.greatestFiniteMagnitude)
                     
-                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedStringKey.font: self.captionFont], context: nil)
+                    let boundingBox = caption.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: self.captionFont], context: nil)
                     
                     captionLabelHeight = max(boundingBox.height, captionLabelHeight - self.captionLabelTopPadding) + self.captionLabelTopPadding
                 }
@@ -405,7 +405,7 @@ public class FLImageScrollView: UIView{
         
         if displayingImageViewList.count > 0{
             let imageView = displayingImageViewList[currentPage]
-            scrollView.bringSubview(toFront: imageView)
+            scrollView.bringSubviewToFront(imageView)
         }
         
         setNeedsLayout()
@@ -606,7 +606,7 @@ extension FLImageScrollView: UIScrollViewDelegate{
             
             let imageView = displayingImageViewList[pageControl.currentPage]
             
-            scrollView.bringSubview(toFront: imageView)
+            scrollView.bringSubviewToFront(imageView)
         }
         
         loadVisibleImages()

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "FLImageScrollView"
-s.version          = "0.6.1"
+s.version          = "0.6.2"
 s.summary          = "ScrollView containing list of images."
 s.homepage         = "https://github.com/felixkli/FLImageScrollView"
 s.license          = 'MIT'
@@ -18,5 +18,6 @@ s.source_files     = 'FLImageScrollView.swift'
 s.dependency "SDWebImage/GIF"
 s.platform         = :ios, "9.0"
 s.ios.deployment_target = "9.0"
+s.swift_version = '5.0'
 
 end
