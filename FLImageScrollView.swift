@@ -10,7 +10,7 @@ public enum ImageScrollIndicatorStyle{
 public class FLImageScrollView: UIView{
     
     fileprivate let pageControl = UIPageControl()
-    fileprivate var displayingImageViewList: [FLAnimatedImageView] = []
+    fileprivate var displayingImageViewList: [SDAnimatedImageView] = []
     
     private let scrollView = UIScrollView()
     private let arrowControlView = UIView()
@@ -31,6 +31,8 @@ public class FLImageScrollView: UIView{
     // Public values
     
     public private(set) var hasCaption = false
+    
+    public var placeholderImage: UIImage?
     
     public var indicatorControlTopPadding: CGFloat = 5
     public var captionLabelHeight: CGFloat = 0
@@ -82,8 +84,9 @@ public class FLImageScrollView: UIView{
     
     public var imageContentMode: UIView.ContentMode = .scaleAspectFit{
         didSet{
-            
-            updateScrollViewContent()
+            if imageList.count > 0 {
+                updateScrollViewContent()
+            }
         }
     }
     
@@ -112,13 +115,15 @@ public class FLImageScrollView: UIView{
     
     public var imageWidth: CGFloat? {
         didSet{
-            
+//            print("[image] imageWidth:\(imageWidth)")
+//            updateScrollViewContent()
             setNeedsLayout()
             layoutIfNeeded()
         }
     }
     public var imageMargin: CGFloat = 0 {
         didSet{
+//            updateScrollViewContent()
             
             setNeedsLayout()
             layoutIfNeeded()
@@ -344,6 +349,8 @@ public class FLImageScrollView: UIView{
                     }
                 }
             }
+            
+            print("[image] frame: \(frame)")
         }
     }
     
@@ -355,7 +362,7 @@ public class FLImageScrollView: UIView{
         
         while displayingImageViewList.count < imageList.count{
             
-            let imageView = FLAnimatedImageView()
+            let imageView = SDAnimatedImageView()
             scrollView.addSubview(imageView)
             displayingImageViewList.append(imageView)
             
@@ -470,13 +477,14 @@ public class FLImageScrollView: UIView{
             
             if self.shouldLoadCurrentIndex(index: imageIndex){
                 
-                if displayingImageViewList[imageIndex].image == nil{
+                if displayingImageViewList[imageIndex].image == nil || displayingImageViewList[imageIndex].image == placeholderImage{
                     
                     loadImageForIndex(index: imageIndex)
                 }
                 
-            }else if imageView.image != nil {
+            }else if imageView.image != nil && imageView.image != placeholderImage {
                 
+//                print("[image] image for index: \(imageIndex) set to nil")
                 imageView.image = nil
             }
         }
@@ -501,32 +509,36 @@ public class FLImageScrollView: UIView{
         }
         
         if let url = URL(string: imageString){
-            
             let imageView = displayingImageViewList[index]
+                        
+            if self.placeholderImage == nil {
+                imageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                imageView.sd_imageIndicator?.startAnimatingIndicator()
+            }else {
+                imageView.sd_imageIndicator?.stopAnimatingIndicator()
+                imageView.sd_imageIndicator = nil
+            }
             
-            imageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
-            imageView.sd_imageIndicator?.startAnimatingIndicator()
+            imageView.sd_imageTransition = .fade(duration: 0.3)
+
+            guard
+                imageView.sd_latestOperationKey == nil ||
+                    imageView.image == nil ||
+                    imageView.image == placeholderImage else { return }
             
-            imageView.sd_setImage(with: url, placeholderImage: nil, options: [SDWebImageOptions.avoidAutoSetImage], progress: nil, completed: { (image, error, cacheType, url) in
+            imageView.sd_setImage(with: url, placeholderImage: placeholderImage, options: [], completed: { (image, error, cacheType, url) in
             
                 imageView.sd_imageIndicator?.stopAnimatingIndicator()
-                imageView.image = image
                 
                 if let _ = error, image == nil{
                     
-                    imageView.image = UIImage(named: "broken_image")
+//                    print("[image] error: \(error)")
                     
                 }else if cacheType != SDImageCacheType.memory {
-                    
-                    imageView.alpha = 0
+                    imageView.image = image
                 }else{
-                    
+                    imageView.image = image
                 }
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    
-                    imageView.alpha = 1
-                })
                 
                 self.layoutIfNeeded()
             })
@@ -553,7 +565,7 @@ public class FLImageScrollView: UIView{
         loadVisibleImages()
     }
     
-    public func imageView(for index: Int) -> FLAnimatedImageView? {
+    public func imageView(for index: Int) -> SDAnimatedImageView? {
         
         if self.displayingImageViewList.count > index {
             
@@ -606,9 +618,11 @@ extension FLImageScrollView: UIScrollViewDelegate{
             
             updateNumberLabel()
             
-            let imageView = displayingImageViewList[pageControl.currentPage]
-            
-            scrollView.bringSubviewToFront(imageView)
+            if displayingImageViewList.count > pageControl.currentPage {
+                
+                let imageView = displayingImageViewList[pageControl.currentPage]
+                scrollView.bringSubviewToFront(imageView)
+            }
         }
         
         loadVisibleImages()
