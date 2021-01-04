@@ -520,11 +520,14 @@ public class FLImageScrollView: UIView{
             }
             
             imageView.sd_imageTransition = .fade(duration: 0.3)
-
+            
             guard
                 imageView.sd_latestOperationKey == nil ||
                     imageView.image == nil ||
-                    imageView.image == placeholderImage else { return }
+                    imageView.image == placeholderImage else {
+                
+                imageView.sd_imageIndicator?.stopAnimatingIndicator()
+                return }
             
             imageView.sd_setImage(with: url, placeholderImage: placeholderImage, options: [], completed: { (image, error, cacheType, url) in
             
